@@ -1,0 +1,6 @@
+@OnlineShop.UserManagementService_HostAddress = https://localhost:7207
+
+GET https://localhost:7207/health
+Accept: application/json
+
+###

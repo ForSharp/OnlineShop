@@ -31,5 +31,10 @@
     <ItemGroup>
       <Folder Include="Data\Migrations\IdentityServer\ConfigurationDb\" />
       <Folder Include="Data\Migrations\IdentityServer\PersistedGrantDb\" />
+      <Folder Include="Models\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\OnlineShop.Library\OnlineShop.Library.csproj" />
     </ItemGroup>
 </Project>

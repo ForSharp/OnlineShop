@@ -1,0 +1,5 @@
+POST https://localhost:5001/connect/token
+Content-Type: application/x-www-form-urlencoded
+
+//grant_type=password&username=nikuser&password=Password_1&scope=OnlineShop.Web&client_id=external
+client_id=test.client&client_secret=511536EF-F270-4058-80CA-1C89C192F69A&scope=OnlineShop.Api&grant_type=client_credentials

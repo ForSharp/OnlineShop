@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using OnlineShop.IdentityServer.Data;
-using OnlineShop.IdentityServer.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -10,6 +8,10 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using OnlineShop.Library.Constants;
+using OnlineShop.Library.Data.Migrations;
+using OnlineShop.Library.UserManagementService.Models;
 
 namespace OnlineShop.IdentityServer
 {
@@ -23,14 +25,20 @@ namespace OnlineShop.IdentityServer
             services.AddControllersWithViews();
 
             var migrationAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
-            var identityConnectionString = Configuration.GetConnectionString("IdentityServerConnection");
+            var identityConnectionString = Configuration.GetConnectionString(ConnectionNames.IdentityServerConnection);
             
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("UsersConnection")));
+            services.AddDbContext<UsersDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString(ConnectionNames.UsersConnection)));
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddEntityFrameworkStores<UsersDbContext>()
                 .AddDefaultTokenProviders();
+            
+            services.AddLogging(config =>
+            {
+                config.AddConsole();
+                config.AddDebug();
+            });
 
             var builder = services.AddIdentityServer(options =>
                 {
@@ -43,7 +51,7 @@ namespace OnlineShop.IdentityServer
                 .AddConfigurationStore(options =>
                 {
                     options.ConfigureDbContext = b => b.UseSqlServer(
-                            Configuration.GetConnectionString(identityConnectionString!),
+                            identityConnectionString,
                             sql => { 
                                 sql.MigrationsAssembly(migrationAssembly);
                                 sql.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
@@ -53,14 +61,16 @@ namespace OnlineShop.IdentityServer
                 .AddOperationalStore(options =>
                 {
                     options.ConfigureDbContext = b => b.UseSqlServer(
-                            Configuration.GetConnectionString(identityConnectionString!),
+                            identityConnectionString,
                             sql => {
                                 sql.MigrationsAssembly(migrationAssembly);
                                 sql.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
                             })
                         .ConfigureWarnings(warnings => warnings.Ignore(CoreEventId.RowLimitingOperationWithoutOrderByWarning));
                 })
-                .AddAspNetIdentity<ApplicationUser>();
+                .AddAspNetIdentity<ApplicationUser>()
+                .AddInMemoryClients(Config.Clients)
+                .AddInMemoryApiScopes(Config.ApiScopes);
 
             builder.AddDeveloperSigningCredential();
             services.AddAuthentication();

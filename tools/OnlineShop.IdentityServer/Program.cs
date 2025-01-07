@@ -11,6 +11,7 @@ using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
 using System;
 using System.Linq;
+using OnlineShop.Library.Constants;
 
 namespace OnlineShop.IdentityServer
 {
@@ -25,13 +26,6 @@ namespace OnlineShop.IdentityServer
                 .MinimumLevel.Override("System", LogEventLevel.Warning)
                 .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
                 .Enrich.FromLogContext()
-                // uncomment to write to Azure diagnostics stream
-                //.WriteTo.File(
-                //    @"D:\home\LogFiles\Application\identityserver.txt",
-                //    fileSizeLimitBytes: 1_000_000,
-                //    rollOnFileSizeLimit: true,
-                //    shared: true,
-                //    flushToDiskInterval: TimeSpan.FromSeconds(1))
                 .WriteTo.Console(
                     outputTemplate:
                     "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}",
@@ -52,7 +46,7 @@ namespace OnlineShop.IdentityServer
                 {
                     Log.Information("Seeding database...");
                     var config = host.Services.GetRequiredService<IConfiguration>();
-                    var connectionString = config.GetConnectionString("UsersConnection");
+                    var connectionString = config.GetConnectionString(ConnectionNames.UsersConnection);
                     SeedData.EnsureSeedData(connectionString);
                     Log.Information("Done seeding database.");
                     return 0;
