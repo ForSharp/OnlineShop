@@ -58,11 +58,11 @@ public class AuthenticationServiceTest
         var userToUpdate = getOneRequest.Payload;
         userToUpdate.DefaultAddress = new Address()
         {
-            City = "Warsaw",
-            Country = "Poland",
-            PostalCode = "00-001",
-            AddressLine1 = "Jasna 21",
-            AddressLine2 = "34"
+            City = "Krasnodar",
+            Country = "Russia",
+            PostalCode = "350000",
+            AddressLine1 = "22",
+            AddressLine2 = "33"
         };
         var updateResult = await _usersClient.Update(userToUpdate);
         Console.WriteLine($"UPDATE: {updateResult.Succeeded}");
