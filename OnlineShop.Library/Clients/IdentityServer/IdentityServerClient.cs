@@ -38,7 +38,7 @@ public class IdentityServerClient : IIdentityServerClient
         return token;
     }
     
-    /*public async Task<Token> GetApiToken(IdentityServerUserNamePassword options)
+    public async Task<Token> GetApiToken(IdentityServerUserNamePassword options)
     {
         var keyValues = new List<KeyValuePair<string, string>>
         {
@@ -55,5 +55,5 @@ public class IdentityServerClient : IIdentityServerClient
 
         var token = JsonConvert.DeserializeObject<Token>(responseContent);
         return token;
-    }*/
+    }
 }
